@@ -28,9 +28,7 @@ public class GridActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recyclerview);
         mRecyclerView = (XRecyclerView)this.findViewById(R.id.recyclerview);
         GridLayoutManager layoutManager = new GridLayoutManager(this,3);
-
         mRecyclerView.setLayoutManager(layoutManager);
-
         mRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         mRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
         mRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);
