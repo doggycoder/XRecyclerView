@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.jcodecraeer.xrecyclerview.progressindicator.AVLoadingIndicatorView;
+import com.jcodecraeer.xrecyclerview.R;
 
 import java.util.Date;
 
@@ -86,6 +87,10 @@ public class ArrowRefreshHeader extends LinearLayout implements BaseRefreshHeade
 		measure(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT);
 		mMeasuredHeight = getMeasuredHeight();
 	}
+
+    public int getRefreshingHeight(){
+        return mMeasuredHeight;
+    }
 
     public void setProgressStyle(int style) {
         if(style == ProgressStyle.SysProgress){
@@ -188,6 +193,11 @@ public class ArrowRefreshHeader extends LinearLayout implements BaseRefreshHeade
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    @Override
     public boolean releaseAction() {
         boolean isOnRefresh = false;
         int height = getVisibleHeight();
@@ -208,7 +218,6 @@ public class ArrowRefreshHeader extends LinearLayout implements BaseRefreshHeade
             destHeight = mMeasuredHeight;
         }
         smoothScrollTo(destHeight);
-
         return isOnRefresh;
     }
 

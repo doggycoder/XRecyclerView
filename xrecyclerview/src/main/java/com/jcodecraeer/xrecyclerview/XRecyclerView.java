@@ -33,7 +33,6 @@ public class XRecyclerView extends RecyclerView {
     private static final int TYPE_FOOTER = -3;
     private static final int HEADER_INIT_INDEX = 10000;
     private static List<Integer> sHeaderTypes = new ArrayList<>();
-    private int mPageCount = 0;
     //adapter没有数据的时候显示,类似于listView的emptyView
     private View mEmptyView;
     private final RecyclerView.AdapterDataObserver mDataObserver = new DataObserver();
@@ -213,6 +212,12 @@ public class XRecyclerView extends RecyclerView {
                 final float deltaY = ev.getRawY() - mLastY;
                 mLastY = ev.getRawY();
                 if (isOnTop() && pullRefreshEnabled) {
+                    //Wuwang添加，如果正在刷新，操作会使头部实际高度小于默认高度，则滚动recyclerview内容。
+                    //允许头部拉长的同时，避免快速滑动不能滑动到最顶部。
+                    if(mRefreshHeader.getState()==ArrowRefreshHeader.STATE_REFRESHING&&(mRefreshHeader.getVisibleHeight()+deltaY/DRAG_RATE)<mRefreshHeader.getRefreshingHeight()){
+                        return super.onTouchEvent(ev);
+                    }
+
                     mRefreshHeader.onMove(deltaY / DRAG_RATE);
                     if (mRefreshHeader.getVisibleHeight() > 0 && mRefreshHeader.getState() < ArrowRefreshHeader.STATE_REFRESHING) {
 //                        Log.i("getVisibleHeight", "getVisibleHeight = " + mRefreshHeader.getVisibleHeight());
@@ -499,9 +504,9 @@ public class XRecyclerView extends RecyclerView {
     }
 
     public void setRefreshing(boolean refreshing) {
-        if (refreshing && pullRefreshEnabled && mLoadingListener != null) {
+        if (refreshing && pullRefreshEnabled && mLoadingListener != null&&mRefreshHeader.getState()<ArrowRefreshHeader.STATE_REFRESHING) {
             mRefreshHeader.setState(ArrowRefreshHeader.STATE_REFRESHING);
-            mRefreshHeader.onMove(mRefreshHeader.getMeasuredHeight());
+            mRefreshHeader.setVisibleHeight(mRefreshHeader.getRefreshingHeight());
             mLoadingListener.onRefresh();
         }
     }
